@@ -3,15 +3,6 @@
 
 using namespace std;
 
-/*************************
-Program Filename: assignment2.cpp
-Author: Tom Nyuma
-Date: 02/02/2021
-Description: This Program to design and test various error handling functions.
- Input : Hardcoded, besides get_int() and to_upper & to_lower which pass in the string arguments sentence_upper and sentence_lower.
-Output: A mix between Booleans, Integers, and strings.
-**************************/
-
 bool check_range(int high, int low, int x) {
 
     return (x >= low && x <= high);
@@ -23,6 +14,7 @@ bool is_capital(char letter){
     return (letter >= 'A' && letter <= 'Z');
 
 }
+
 int is_even(int num_even) {
 
     return (num_even % 2 == 0);
@@ -37,8 +29,22 @@ int is_odd(int num_odd) {
 
 bool equality_test(int num1, int num2) {
 
-    return (num1 == num2);
+    int j = 0;
 
+    if (num1 > num2) {
+
+        j+=1;
+
+    } else if (num1 < num2) {
+
+        j-=1;
+
+    } else {
+
+        j = 0;
+
+    }
+    return j;
 }
 
 float float_is_equal(float num1, float num2, float precision){
@@ -48,7 +54,7 @@ float float_is_equal(float num1, float num2, float precision){
     if (num1 == num2) {
         return 1;
     }
-    if (abs(num1 - num2) <= precision) { // Non-Negative difference (abs) is less than or equal to precision.
+    if (abs(num1 - num2) <= precision) {
 
         return 1;
 
@@ -63,12 +69,12 @@ int is_int(string num) {
     int i;
     int counter = 0;
 
-    if (num[0] == '-') {
+    if (num[0] == '-') { // num[0] is the first character in the string.
 
-        counter += 1; //This accounts for the edge case of
-            // negative values, if there is a '-' character we increment counter.
+        counter += 1; //This accounts for the edge case when given a
+                       // negative value, so if there is a '-' character at num[0], we increment counter.
+
     }
-
     for (i=0; i < num.length(); i++) {
 
         if (num.at(i) >= '0' && num.at(i) <= '9') {
@@ -76,18 +82,14 @@ int is_int(string num) {
             counter += 1;
 
         }
-
     }
-
     if (counter == num.length()) {
 
-        return 1; // We know it's a integer because our for loop successfully looped through the input.
-                    // Making counter equal to the length of string num.
+        return 1; // We know it's a integer instantly because we reached here.
+
 
     }
-
     return 0; // If we make it down, here we know that the string is not an integer
-
 }
 
 bool letters_present(string sentence) {
@@ -96,13 +98,28 @@ bool letters_present(string sentence) {
     int i;
 
     for (i = 0; i < sentence.size(); i++) {
-
+        // Conditional that optimizes for both uppercase and lowercase alphabetical characters being present.
         if (sentence[i] >= 'A' && sentence[i] <= 'Z'|| sentence[i] >= 'a' && sentence[i] <= 'z') {
                 ltr_present = true;
         }
 
     }
     return ltr_present;
+
+}
+
+bool numbers_present(string sentence) {
+
+    bool numbers_present = false;
+    int i;
+
+    for (i = 0; i < sentence.size(); i++) {
+        if (sentence[i] >= '0' && sentence[i] <= '9' || sentence[i] >= 48 && sentence[i] <= 57) {
+            numbers_present = true;
+        }
+
+    }
+    return numbers_present;
 
 }
 
@@ -115,15 +132,15 @@ bool contains_sub_string(string sentence, string sub_string) {
         int j;
         for (j=0; j < sub_string.length(); j++) {
 
-            if (sub_string[i+j] != sentence[j]){  // If the sliding window's contents are not equal to the window
+            if (sub_string[i+j] != sentence[j]){  // If the sliding window's contents != chars at sentence[j]
                 break;
-            }   // We know that it is not a substring, so we exit the loop.
+            }   // Hence we know that it is not a substring, so we exit the loop.
         }
-        if (j == len_substring) {
+        if (j == len_substring) { // If j is the same length as our substr we know it's inside the sentence.
             return true;
         }
     }
-    return false; // If we reach here, we know that our sub_string does not exist.
+    return false; // Edge Case: If we reach here, we know that our sub_string does not exist.
 }
 
 int word_count(string sentence){
@@ -131,7 +148,7 @@ int word_count(string sentence){
     int word_count = 0;
     char prev = ' ';
 
-    for (char i : sentence) { // Range-based for loop to iterate over the values vs. an index.
+    for (char i : sentence) { // Range-based for loop to iterate over the values vs. through the indexes.
 
         if (i != ' ' && prev == ' ' ) {
 
@@ -174,64 +191,31 @@ string to_lower(string sentence) {
     return sentence;
 }
 
-void get_int(){
+int get_int(){
 
     long int choice;
-    bool error; // Our error flag
+    bool error; //Our error flag
     do
     {
-        error = false; // Flag false, safe
+        error = false; //Flag false, safe
         cout << "Enter a integer value: ";
         cin >> choice;
         if(cin.fail()){
-            error = true; // Flag true, invalid input has occured
+            error = true; //Flag true, invalid input has occured
             cout << "Error, invalid entry.\n\n";
         }
-        cin.clear();                // Clear any error flags
-        cin.ignore(1000,'\n');      // Ignores 1000 characters, or until '\n'
+        cin.clear();                //Clear any error flags
+        cin.ignore(1000,'\n');      //Ignores 1000 characters, or until '\n'
     } while(error);
 
     cout << "\nThe integer value entered was: " << choice << '\n';
     cout << "Press <enter> to exit console: ";
     cin.get();
 
+    return 0;
 }
 
-/*
- * 
-Alternate get_int() solution. Makes uses of cin >> so it's not to different, but it does have some differences.
-
- int get_int() {
-
-    // get_int() Function from Assignment 2
-
-    int x;
-    bool valid_integer = false;
-
-    while (!valid_integer){
-
-        cout << "Enter a string: \n" ;
-        cin >> x;
-        valid_integer = false;
-        if (cin.fail()) {
-
-            cout << "Not valid integer." << endl;
-
-        } else {
-            valid_integer = true;
-        }
-        cin.clear();
-        cin.ignore(INT_MAX,'\n');
-    }
-
-    return x;
-}
-
-*/
 int main() {
-
-    cout << to_upper("hello") << endl;
-    cout << to_lower("HELLO") << endl;
 
     cout << "Testing check_range(10,0,9)...\n"; // check_range(high,low,target)
     cout << "Expected 1";
@@ -275,14 +259,14 @@ int main() {
     (is_odd(3)==1) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
 
     cout << "Testing equality_test(num1: 4, num2: 3)...\n";
-    cout << "Expected: 0";
-    cout << "\tActual: " << equality_test(4,3); // Returns False as 4 & 3 are not equal
-    (equality_test(4,3)==0) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
+    cout << "Expected: 1";
+    cout << "\tActual: " << equality_test(4,3); // Returns 1 as 4 is greater than 3
+    (equality_test(4,3)==1) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
 
     cout << "Testing equality_test(num1: 2, num2: 2)...\n";
-    cout << "Expected: 1";
-    cout << "\tActual: " << equality_test(2,2); // Returns True as 2 and 2 are equal.
-    (equality_test(2,2)==1) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
+    cout << "Expected: 0";
+    cout << "\tActual: " << equality_test(2,2); // Returns 0 as num1 and num2 are equal.
+    (equality_test(2,2)==0) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
 
     cout << "Testing float_is_equal(num1: 4.200, num2: 4.2, precision: 0.01)...\n";
     cout << "Expected: 1";
@@ -303,6 +287,16 @@ int main() {
     cout << "Expected: 0";
     cout << "\tActual: " << is_int("a1b2c3"); // Returns False as a1b2c3 is not an integer.
     (is_int("a1b2c3")==0) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
+
+    cout << "Testing numbers_present(\"hello123\")...\n";
+    cout << "Expected: 1";
+    cout << "\tActual: " << numbers_present("hello123"); // Returns True as hello123 contains numbers.
+    (numbers_present("hello123")==1) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
+
+    cout << "Testing numbers_present(\"hello\")...\n";
+    cout << "Expected: 0";
+    cout << "\tActual: " << numbers_present("hello"); // Returns False as hello does not contain numbers.
+    (numbers_present("hello")==0) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
 
     cout << "Testing letters_present(\"hello123\")...\n";
     cout << "Expected: 1";
@@ -334,7 +328,7 @@ int main() {
     cout << "\tActual: " << word_count(""); // Returns 0
     (word_count("")==0) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
 
-    // I'm initializing an object for the functions so we can evaluate if it passed or failed.
+    // Calling the function on facing variables below to test for equality against our "hard-coded" tests.
 
     string sentence_upper = to_upper("hello");
     string sentence_lower = to_lower("HELLO");
@@ -349,12 +343,9 @@ int main() {
     cout << "\tActual: " << to_lower("HELLO"); // Returns "hello"
     (to_lower("HELLO")==sentence_lower) ? cout << "\tPASSED\n" : cout << "\tFailed\n";
 
-    get_int(); //get_int() is the only function in our program that requires user input, hence being at the end.
-
-
+    get_int(); // get_int() is the only function in our program that requires user input!
 
     return 0;
-
 
 
 }
