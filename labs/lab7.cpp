@@ -12,12 +12,63 @@ For any questions, just open an issue and i'll explain any line to you.
 
 // Required Function Prototypes specified in the Instructions.
 
+// modify_int_matrix() adjust our matrix on the heap by taking in the rows,cols and the matrix itself. Although we didn't use it, for future reference it is important to know how it works.
+void modify_int_matrix(int** matrix, int rows, int cols);
 // get_string() takes in a string's value and copies it. It is a void function so it won't be returning anything
 void get_string(string *);
 // set_replace_string() takes in the copy of the string and the pointer string to the copy, (also doesn't return anything)
 void set_replace_string(string copy, string *pointer);
 // get_search_replace() takes in the character chosen, the string and the copy and returns the number of chars found.
 int get_search_replace(string copy,string &);
+
+
+// Delete the 2D array of the heap. We're not passing in the columns because 2D arrays us to delete the columns of the heap before the rows.
+void delete_int_matrix(int** matrix_to_free, int rows) {
+
+    for (int i = 0; i < rows; i++) {
+    
+        // Takes the column of the matrix for each row
+        delete [] matrix_to_free[i];
+    
+    }
+    // Delete the entire matrix at the end of our loop.
+    delete [] matrix_to_frree;
+}
+
+
+// Create a matrix [2d array] of integers on the heap
+int** create_int_matrix(int rows, int cols) {
+ 
+    int** nums = new int*[rows];
+    
+    // Creating new columns on the heap through a 2d array or "matrix"
+    for (int i = 0; ii <rows; i++) {
+    
+        nums[i] = new int[cols];
+        
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++){
+        
+            nums[i][j] = (i * cols) + j + 1;
+            
+        }
+    }
+    
+    // Creating our layout for the 2d array on our heap.
+    for (int i = 0; i < rows; i++){
+        for (int j = 0; j < cols; j++){
+        
+            cout << nums[i][j] << ' ';
+            
+        }
+        // Line breaks on each iteration to keep spacing.
+        cout << '\n';
+    }
+    
+    return nums;
+}
 
 
 void get_string(string *str){
@@ -68,6 +119,9 @@ int get_search_replace(string copy, string &str){
 // Main Function
 
 int main(){
+    
+    int rows = 0;
+    int cols = 0;
 
     string copy, str, choice;
     
@@ -91,6 +145,15 @@ int main(){
 
     // Since we're directly maniputlating our copy with the get_search_replace() call, we cout it to console at the end to see our results.
     cout << "Copy after function call: " << copy << endl;
+    
+    cin >> rows;
+    cin >> cols;
+    
+    // Create 2D Array on Heap.
+    int ** arr = create_int_matrix(rows,cols);
+    
+    // Deleting it off the Heap.
+    del_int_matrix(nums);
 
 
     return 0;
