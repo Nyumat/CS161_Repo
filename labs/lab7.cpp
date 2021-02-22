@@ -146,11 +146,18 @@ int main(){
     // Since we're directly maniputlating our copy with the get_search_replace() call, we cout it to console at the end to see our results.
     cout << "Copy after function call: " << copy << endl;
     
+    cout << "Manipulating Heap..." << endl;
+    
     cin >> rows;
     cin >> cols;
     
     // Create 2D Array on Heap.
     int ** arr = create_int_matrix(rows,cols);
+    
+    // Modifying it while still on the Heap
+    int** nums = new int*[rows];
+    modify_int_matrix(arr, int rows, int cols);
+    
     
     // Deleting it off the Heap.
     del_int_matrix(nums);
