@@ -2,7 +2,7 @@
 
     Assignment 3 main.cpp code. 
     Done 100% by @nyumat
-    *EDUCATIONAL/REFERENCE PURPOSES ONLY*
+    *EDUCATIONAL PURPOSES ONLY*
 
 */
 
