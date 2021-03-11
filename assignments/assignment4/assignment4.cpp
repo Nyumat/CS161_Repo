@@ -6,8 +6,7 @@
 
 #include <iostream>
 #include <string>
-
-
+#include <ctime>
 
 using namespace std;
 
@@ -21,7 +20,7 @@ void drawBoard(int rows, int columns, char** board);
 void start(int rows, int columns, int connectX, int playerCount, int turn, char** board);
 
 // Insert player x's move
-bool executeMove(int rows, int columns, int selection, char piece, char** board);
+bool executeMove(int rows, int selection, char piece, char **board);
 
 // Check if any of the players have won
 int findWinner(int rows, int columns, int connectX, char** board);
@@ -42,37 +41,16 @@ int getChoice(int rows, int columns, int turn, int playerCount);
 
 bool checkArguments(int argc){
 
-    // Conditionals to check if the arguments were satisfied.
-    if (argc > 4) {
+    return argc == 4 || ((std::cerr << "\nYou have entered an invalid number of arguments. \t"), (false));
 
-        cerr << "You have entered more than the required arguments! " << endl;
-        return false;
-
-    } else if (argc < 4) {
-
-        cerr << "You have not entered enough arguments to run this program! " << endl;
-        return false;
-
-    } else { // If they entered the correct number of arguments on the command line
-
-        return true;
-
-    }
-
-    /*
-        We don't have to include a default because we've accounted for all cases (will always return either true or false).
-    */
 }
 
 bool validInput(string playerInput) {
 
-    // If there user's input is not a number
-    if (!(isdigit(playerInput[0]))){
-        return false;
-    }
-
-    // If we make it down here--it is a number, return true/1
-    return true;
+    // If there user's input is a number (valid input)
+    if (isdigit(playerInput[0]))
+        return true;
+    return false;
 
 }
 
@@ -98,7 +76,7 @@ void start(int rows, int columns, int connectX, int playerCount, int turn, char*
 
         }
 
-        while (!executeMove(rows,columns,getChoice(rows,columns,turn,playerCount),XorO,board));
+        while (!executeMove(rows, getChoice(rows, columns, turn, playerCount), XorO, board));
 
         turn ^= 1;
 
@@ -147,14 +125,12 @@ int findWinner(int rows, int columns, int connectX, char** board) {
     int i,j;
     bool tie = true;
 
+    // Check each column's first row 
     for (i = 0; i < columns; i++) {
 
-        // If the current column in our iteration has an empty slot a tie cannot occur.
-        if (board[0][i] == ' ') {
-
+        // If the current slot in our iteration has an empty slot a tie cannot occur.
+        if (board[0][i] == ' ') 
             tie = false;
-
-        }
 
     }
     // If there is a tie we must return -1 and prompt the user(s) to play again.
@@ -166,7 +142,7 @@ int findWinner(int rows, int columns, int connectX, char** board) {
 
         for (j = 0; j < columns; j++) {
 
-            // Our piece to insert (X or O) needs to be intialized to a variable on the i'th row and j'th column
+            // Our piece to start at (X or O) needs to be initialized to a the current piece on the i'th row and j'th column
             XorO = board[i][j];
 
             // If we see an empty space in our row/column traversal we simply continue the loop because that is an open slot.
@@ -177,7 +153,7 @@ int findWinner(int rows, int columns, int connectX, char** board) {
             // Flag true after every win condition check because we return 0 at the end of our function.
             connectFour = true;
 
-            // Check the j'th column for connect four
+            // Check horizontally for a winner.
             if (j <= columns - connectX) {
 
                 for (currConnected = 1; currConnected < connectX; currConnected++) {
@@ -185,8 +161,8 @@ int findWinner(int rows, int columns, int connectX, char** board) {
                     if (board[i][j + currConnected] != XorO) {
 
                         connectFour = false;
-
                     }
+                    
 
                 }
 
@@ -195,31 +171,31 @@ int findWinner(int rows, int columns, int connectX, char** board) {
                 }
 
             }
-
-            // Check for both the i'th row and j'th column for connect four
+            connectFour = true;
+            // Check for a winner along the columns. (Vertical)
             if (i <= rows - connectX && j < columns) {
 
                 for (currConnected = 1; currConnected < connectX; currConnected++) {
 
                     if (board[i + currConnected][j] != XorO) {
 
-                        connectFour = true;
+                        connectFour = false;
 
                     }
 
                 }
-
-                return connectFour;
-
+                if (connectFour) {
+                    return 1;
+                }
             }
 
             connectFour = true;
-            // Check along a diagonal row and column space for connect four
+            // Check along the diagonal row and column space for connect four
             if (i >= connectX - 1 && j <= columns - connectX) {
 
                 for (currConnected = 1; currConnected < connectX; currConnected++) {
 
-                    if (board[i - connectX][j + currConnected] != XorO) {
+                    if (board[i - currConnected][j + currConnected] != XorO) {
                         connectFour = false;
                     }
 
@@ -258,6 +234,7 @@ int findWinner(int rows, int columns, int connectX, char** board) {
     }
 
     // We return 0 at the end of this function because this function's goal is to find out if we have a winner after each move in our connect four.
+    // This means if we make it down here, we know none of the players have won.
     return 0;
 
 }
@@ -269,7 +246,7 @@ char** makeBoard(int rows, int columns) {
     // Allocate memory for our board
     board = new char*[rows];
 
-    // We need to now allocate memory for each row
+    // We need to now allocate memory for each column
     for (int k = 0; k < rows; ++k) {
 
         board[k] = new char[columns];
@@ -290,29 +267,30 @@ char** makeBoard(int rows, int columns) {
     return board;
 }
 
-// Since we have to show the board after each move, we'll be using this void function a lot.
-// This code was given in the instructions of the assignment.
-
+// This function was given by Kishore to display the board.
+// It will be called after each execution of a move by either the player or computer.
 void drawBoard(int rows, int columns, char** board) {
 
     for (int i = 0; i < rows; ++i) {
 
         for (int j = 0; j < columns; ++j){
 
-            if (i % 2 == 0 && j % 2 == 0)
+            if (i % 2 == 0 && j % 2 == 0) {
 
-                cout << "|\033[30;47m " << board[i][j] << " ";
+                cout << "|\033[30;47m " << board[i][j]
+                << " " << "\033[30;0m";
 
-            else if (i % 2 == 1 && j % 2 == 1)
+            } else if (i % 2 == 1 && j % 2 == 1){
 
-                cout << "|\033[30;47m " << board[i][j] << " ";
+                cout << "|\033[30;47m " << board[i][j]
+                << " " << "\033[30;0m";
+            }
+            else {
 
-            else
+                cout << "|\033[30;0m " << board[i][j] << " ";
 
-                cout << "|\033[0m " << board[i][j] << " ";
+            }
             cout << "\033[0m";
-
-
         }
 
         cout << "\n";
@@ -322,12 +300,12 @@ void drawBoard(int rows, int columns, char** board) {
 }
 
 
-bool executeMove(int rows, int columns, int selection, char piece, char** board) {
+bool executeMove(int rows, int selection, char piece, char **board) {
 
     // If the board's column is an X or O we can return 0 to know that the move can't be executed.
     if (board[0][selection] == 'O' || board[0][selection] == 'X') {
 
-        return 0;
+        return false;
 
     }
 
@@ -348,15 +326,15 @@ bool executeMove(int rows, int columns, int selection, char piece, char** board)
 
     // Act of 'placing' the piece into the row we're pointing to and the column selection
     board[ptr][selection] = piece;
-    // Return true to signal the move has occured
-    return 1;
+    // Return true to signal the move has occurred
+    return true;
 
 }
 
 int getPlayerOneInput(int columns) {
 
-    string sInput;
     int iInput;
+    string sInput;
 
     cout << "Enter a slot to insert in between 1 and " << columns;
     cin >> sInput;
@@ -365,7 +343,7 @@ int getPlayerOneInput(int columns) {
     while(!validInput(sInput) || (stoi(sInput) < 1 ) || (stoi(sInput) > columns)) {
 
         // Flag error
-        cerr << ">> Error. Enter a column between 1 and " << columns << " to continue.";
+        cerr << "\n >> Error. Enter a column between 1 and " <<  columns << " to continue.";
         cin >> sInput;
 
     }
@@ -493,11 +471,12 @@ int main(int argc, char* argv[]){
 
         if (playerCount == 1) {
 
-            cout << "Player vs Computer " << endl;
-            cout << ">> Enter a key to make the computer move first. ";
-            cin.get();
-            cin.ignore(1000,'\n');
+            cout << "\n\n\t\tPlayer vs Computer " << endl;
+            cout << "If you'd like to go first, type 'y' or 'Y' " << endl;
+            cout << ">> Otherwise, enter a key to make the computer move first. ";
+            cin >> playerVsCPU;
 
+            // To go first,
             if (playerVsCPU == 'y' || playerVsCPU == 'Y') {
                 turn = 0;
             } else {
@@ -505,7 +484,7 @@ int main(int argc, char* argv[]){
             }
 
         } else {
-            cout << "Player One vs Player Two " << endl;
+            cout << "\n\n\t\tPlayer One vs Player Two " << endl;
         }
 
         start(rows,columns,connectX,playerCount,turn,board);
@@ -519,13 +498,13 @@ int main(int argc, char* argv[]){
 
     for (int f = 0; f < rows; ++f) {
 
-        delete board[f];
+        delete [] board[f];
 
     }
 
     delete [] board;
     cout << "Thanks for playing..." << endl;
-    exit(0);
 
 
+    return 0;
 }
