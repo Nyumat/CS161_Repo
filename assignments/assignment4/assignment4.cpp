@@ -7,6 +7,8 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <iomanip>
+
 
 using namespace std;
 
@@ -34,7 +36,7 @@ bool checkArguments(int argc);
 // Get the two players' input
 int getPlayerOneInput(int columns);
 // Aka. The Computer
-int getPlayerTwoInput(int columns);
+int getCPUInput(int columns);
 
 // Get the option that player x chooses
 int getChoice(int rows, int columns, int turn, int playerCount);
@@ -125,11 +127,11 @@ int findWinner(int rows, int columns, int connectX, char** board) {
     int i,j;
     bool tie = true;
 
-    // Check each column's first row 
+    // Check each column's first row
     for (i = 0; i < columns; i++) {
 
         // If the current slot in our iteration has an empty slot a tie cannot occur.
-        if (board[0][i] == ' ') 
+        if (board[0][i] == ' ')
             tie = false;
 
     }
@@ -162,7 +164,7 @@ int findWinner(int rows, int columns, int connectX, char** board) {
 
                         connectFour = false;
                     }
-                    
+
 
                 }
 
@@ -271,6 +273,13 @@ char** makeBoard(int rows, int columns) {
 // It will be called after each execution of a move by either the player or computer.
 void drawBoard(int rows, int columns, char** board) {
 
+    for (int v = 0; v < columns; ++v)
+    {
+        cout << setw(3) << (v + 1) << " ";
+    }
+
+    cout << "\n";
+
     for (int i = 0; i < rows; ++i) {
 
         for (int j = 0; j < columns; ++j){
@@ -278,12 +287,12 @@ void drawBoard(int rows, int columns, char** board) {
             if (i % 2 == 0 && j % 2 == 0) {
 
                 cout << "|\033[30;47m " << board[i][j]
-                << " " << "\033[30;0m";
+                     << " " << "\033[30;0m";
 
             } else if (i % 2 == 1 && j % 2 == 1){
 
                 cout << "|\033[30;47m " << board[i][j]
-                << " " << "\033[30;0m";
+                     << " " << "\033[30;0m";
             }
             else {
 
@@ -343,6 +352,9 @@ int getPlayerOneInput(int columns) {
     while(!validInput(sInput) || (stoi(sInput) < 1 ) || (stoi(sInput) > columns)) {
 
         // Flag error
+        cin.clear();
+        cin.ignore(1000,'\n');
+        columns = columns;
         cerr << "\n >> Error. Enter a column between 1 and " <<  columns << " to continue.";
         cin >> sInput;
 
@@ -355,7 +367,7 @@ int getPlayerOneInput(int columns) {
 }
 
 // Get the randomized computer input within the number of columns specified in the main() argument
-int getPlayerTwoInput(int columns) {
+int getCPUInput(int columns) {
 
     int randomInput;
 
@@ -395,7 +407,7 @@ int getChoice(int rows, int columns, int turn, int playerCount) {
         } else {
 
             cout << "Computer's turn: " << endl;
-            return getPlayerTwoInput(columns) - 1;
+            return getCPUInput(columns) - 1;
 
         }
 
@@ -409,20 +421,28 @@ int getChoice(int rows, int columns, int turn, int playerCount) {
 int main(int argc, char* argv[]){
 
     int rows,columns,playerCount;
+    // ConnectX can be altered to make the board require more than four in a row to connect!
     int connectX = 4;
+    // Turns are either a 0 or 1. We will use the bitwise XOR operator (^) to flip between turn 1 and turn 0.
     int turn = 0;
     char **board, playerVsCPU;
-    char toContinue = 'n';
+    // Placeholder for our prompt to go again.
+    char toContinue = ' ';
     // srand() call for our CPU random choice.
     srand(time(nullptr));
 
 
     if (checkArguments(argc)) {
 
+        // The first argument will represent player count (according to instructions by kishore)
+        // The cpu is functioning so both options are valid.
         playerCount = atoi(argv[1]);
-
+        // The second argument will represent the rows for our connect four (7 is recommended)
         rows = atoi(argv[2]);
+        // The third argument will reperesent the columns for our connect four (6 is recommended)
+        columns = atoi(argv[3]);
 
+        // Error handling for invalid inputs.
         while (rows > 20) {
 
             cin.clear();
@@ -433,8 +453,6 @@ int main(int argc, char* argv[]){
 
         }
 
-        columns = atoi(argv[3]);
-
         while (columns > 20) {
 
             cin.clear();
@@ -444,7 +462,6 @@ int main(int argc, char* argv[]){
             cin >> columns;
 
         }
-
 
     } else {
 
@@ -465,13 +482,11 @@ int main(int argc, char* argv[]){
 
     do {
 
-
-
         board = makeBoard(rows,columns);
 
         if (playerCount == 1) {
 
-            cout << "\n\n\t\tPlayer vs Computer " << endl;
+            cout << "\n\n\t\tHuman vs Computer " << endl;
             cout << "If you'd like to go first, type 'y' or 'Y' " << endl;
             cout << ">> Otherwise, enter a key to make the computer move first. ";
             cin >> playerVsCPU;
