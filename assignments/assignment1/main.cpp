@@ -1,18 +1,9 @@
-/**********************************************************
-** Program: assignment1.cpp
- *
-** Author: Tom Nyuma
- *
-** Date: 01/08/2021
- *
-** Description: This program was created to find the gross income and taxes for a cars salesperson.
- *
-** Input: monthly salary, number of months worked in a year, cost of a car, number of cars sold
- * number of misconducts observed, tax year, and state.
- *
-** Output: total taxes, income before taxes, income after taxes.
- * *************************************************/
+/*
 
+        ASSIGNMENT 1 CODE.
+        *EDUCATIONAL PURPOSES ONLY*
+
+*/
 
 #include <iostream>
 #include <stdlib.h>
